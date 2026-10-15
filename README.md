@@ -20,6 +20,7 @@ Prepare transfers that lock funds in contract escrow and execute themselves auto
 | **RPC Endpoint** | `https://rpc.bohr.life` |
 | **Native Gas Coin** | `BOT` (18 Decimals) |
 | **Contract Address** | [`0x1ef64cc8e0e5c251bf8f77034a091957d1105f2d`](https://scan.bohr.life/address/0x1ef64cc8e0e5c251bf8f77034a091957d1105f2d) |
+| **Verification** | [✅ **Verified on Bohr Scan**](https://scan.bohr.life/address/0x1ef64cc8e0e5c251bf8f77034a091957d1105f2d#code) |
 | **Deployment TX** | [`0x59ddc3e47136b17871db7949c49f1f619f24ebdae764348b7b50f0068cb1a1ea`](https://scan.bohr.life/tx/0x59ddc3e47136b17871db7949c49f1f619f24ebdae764348b7b50f0068cb1a1ea) |
 | **Explorer** | [https://scan.bohr.life/](https://scan.bohr.life/) |
 
@@ -152,6 +153,7 @@ The keeper script will connect to BotChain Testnet (`https://rpc.bohr.life`), wa
 | `npm run build` | Compile TypeScript and produce production bundle |
 | `npm run compile` | Compile `ScheduledTransfer.sol` with Solidity 0.8.20 |
 | `npm run deploy` | Deploy contract to BotChain Testnet via CLI |
+| `npm run verify` | Verify smart contract source code on Bohr Scan explorer via API |
 | `npm run keeper` | Run autonomous 24/7 execution relayer daemon |
 
 ---

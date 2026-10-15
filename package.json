@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "compile": "node scripts/compile.cjs",
     "deploy": "node scripts/deploy.cjs",
+    "verify": "node scripts/verify.cjs",
     "keeper": "node scripts/keeper.cjs",
     "lint": "oxlint",
     "preview": "vite preview"
