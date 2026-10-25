@@ -186,24 +186,28 @@ export const WhitepaperModal: FC<WhitepaperModalProps> = ({
             <div className="chain-details-box font-mono">
               <div className="chain-detail-row">
                 <span className="text-dim">Network:</span>
-                <span className="text-white font-bold">BotChain Testnet</span>
+                <span className="text-white font-bold">BotChain Mainnet</span>
               </div>
               <div className="chain-detail-row">
                 <span className="text-dim">Chain ID:</span>
-                <span className="text-gold font-bold">968</span>
+                <span className="text-gold font-bold">677</span>
               </div>
               <div className="chain-detail-row">
                 <span className="text-dim">RPC Endpoint:</span>
-                <span className="text-muted text-xs">https://rpc.bohr.life</span>
+                <span className="text-muted text-xs">https://rpc.botchain.ai</span>
               </div>
               <div className="chain-detail-row">
                 <span className="text-dim">Native Token:</span>
-                <span className="text-gold">BOT (18 decimals)</span>
+                <span className="text-gold">BOT (18 decimals • Total Supply: 150M)</span>
+              </div>
+              <div className="chain-detail-row">
+                <span className="text-dim">Explorer:</span>
+                <span className="text-muted text-xs">https://scan.botchain.ai</span>
               </div>
               <div className="chain-detail-row">
                 <span className="text-dim">Contract Address:</span>
                 <a
-                  href={`https://scan.bohr.life/address/${contractAddress}`}
+                  href={`https://scan.botchain.ai/address/${contractAddress}#code`}
                   target="_blank"
                   rel="noreferrer"
                   className="text-gold flex items-center gap-1 hover:underline text-xs"
@@ -218,7 +222,7 @@ export const WhitepaperModal: FC<WhitepaperModalProps> = ({
         {/* Footer */}
         <div className="modal-footer flex items-center justify-between">
           <span className="text-xs text-dim font-mono">
-            BotChain Testnet • Open-Source Protocol
+            BotChain Mainnet • Open-Source Protocol
           </span>
           <button type="button" className="btn-gold" onClick={onClose}>
             Close Whitepaper

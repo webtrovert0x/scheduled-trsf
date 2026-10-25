@@ -13,7 +13,7 @@ import {
   SCHEDULED_TRANSFER_ABI,
   type ScheduledTransferItem,
 } from '../config/contract'
-import { botchainTestnet } from '../config/chain'
+import { botchainMainnet } from '../config/chain'
 import { Countdown } from './Countdown'
 import {
   CheckCircle2,
@@ -99,7 +99,7 @@ export const TransferList: FC<TransferListProps> = ({
       abi: SCHEDULED_TRANSFER_ABI,
       functionName: 'cancelTransfer',
       args: [id],
-      chainId: botchainTestnet.id,
+      chainId: botchainMainnet.id,
     })
   }
 
@@ -197,7 +197,7 @@ export const TransferList: FC<TransferListProps> = ({
             </span>
           </div>
           <a
-            href={`https://scan.bohr.life/tx/${cancelTxHash}`}
+            href={`https://scan.botchain.ai/tx/${cancelTxHash}`}
             target="_blank"
             rel="noreferrer"
             className="font-mono text-xs text-gold flex items-center gap-1 hover:underline"
@@ -305,7 +305,7 @@ export const TransferList: FC<TransferListProps> = ({
                   <div className="party-box">
                     <span className="party-role">From</span>
                     <a
-                      href={`https://scan.bohr.life/address/${item.sender}`}
+                      href={`https://scan.botchain.ai/address/${item.sender}`}
                       target="_blank"
                       rel="noreferrer"
                       className="party-address font-mono"
@@ -323,7 +323,7 @@ export const TransferList: FC<TransferListProps> = ({
                   <div className="party-box">
                     <span className="party-role">To</span>
                     <a
-                      href={`https://scan.bohr.life/address/${item.recipient}`}
+                      href={`https://scan.botchain.ai/address/${item.recipient}`}
                       target="_blank"
                       rel="noreferrer"
                       className="party-address font-mono"
@@ -343,7 +343,7 @@ export const TransferList: FC<TransferListProps> = ({
                   <div className="token-contract-row font-mono">
                     <span className="text-dim text-xs">Token Contract:</span>
                     <a
-                      href={`https://scan.bohr.life/address/${item.token}`}
+                      href={`https://scan.botchain.ai/address/${item.token}`}
                       target="_blank"
                       rel="noreferrer"
                       className="text-xs text-gold flex items-center gap-1 hover:underline"

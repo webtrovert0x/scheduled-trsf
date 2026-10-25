@@ -2,10 +2,10 @@
 ## Whitepaper: Non-Custodial Time-Locked Escrow & Automated Settlement on BotChain
 
 **Version**: 1.0.0  
-**Network**: BotChain Testnet (Chain ID: `968`)  
-**Native Gas Coin**: `BOT`  
-**Contract Address**: `0x1ef64cc8e0e5c251bf8f77034a091957d1105f2d`  
-**Explorer**: [https://scan.bohr.life](https://scan.bohr.life/)  
+**Network**: BotChain Mainnet (Chain ID: `677`)  
+**Native Gas Coin**: `BOT` (Total Supply: 150 Million)  
+**Contract Address**: `0x4e82db1e7fe4a3104677a8ca7f27eb4f982e74ac`  
+**Explorer**: [https://scan.botchain.ai](https://scan.botchain.ai/)  
 
 ---
 
@@ -125,12 +125,12 @@ Batching aggregates executions into a single atomic transaction, saving base tra
 
 | Parameter | Specification |
 | :--- | :--- |
-| **Network Name** | BotChain Testnet |
-| **Chain ID** | `968` |
-| **RPC Endpoint** | `https://rpc.bohr.life` |
-| **Native Currency** | `BOT` (18 Decimals) |
-| **Block Explorer** | `https://scan.bohr.life/` |
-| **Contract Address** | `0x1ef64cc8e0e5c251bf8f77034a091957d1105f2d` |
+| **Network Name** | BotChain Mainnet |
+| **Chain ID** | `677` |
+| **RPC Endpoint** | `https://rpc.botchain.ai` |
+| **Native Currency** | `BOT` (18 Decimals • Total Supply: 150 Million) |
+| **Block Explorer** | `https://scan.botchain.ai/` |
+| **Contract Address** | `0x4e82db1e7fe4a3104677a8ca7f27eb4f982e74ac` |
 
 ---
 

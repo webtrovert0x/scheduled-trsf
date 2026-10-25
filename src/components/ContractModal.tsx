@@ -40,7 +40,7 @@ export const ContractModal: FC<ContractModalProps> = ({
   const [deployError, setDeployError] = useState<string | null>(null)
   const [copied, setCopied] = useState<boolean>(false)
 
-  // Verify contract on BotChain testnet
+  // Verify contract on BotChain Mainnet
   useEffect(() => {
     async function checkCode() {
       if (!isAddress(inputAddress) || !publicClient) {
@@ -174,26 +174,30 @@ export const ContractModal: FC<ContractModalProps> = ({
           <div className="chain-info-box">
             <div className="chain-info-row">
               <span className="text-dim">Network:</span>
-              <span className="font-mono text-white">BotChain Testnet</span>
+              <span className="font-mono text-white">BotChain Mainnet</span>
             </div>
             <div className="chain-info-row">
               <span className="text-dim">Chain ID:</span>
-              <span className="font-mono text-gold font-bold">968</span>
+              <span className="font-mono text-gold font-bold">677</span>
+            </div>
+            <div className="chain-info-row">
+              <span className="text-dim">Native Token:</span>
+              <span className="font-mono text-white">BOT (Supply: 150M)</span>
             </div>
             <div className="chain-info-row">
               <span className="text-dim">RPC:</span>
-              <span className="font-mono text-muted text-xs">https://rpc.bohr.life</span>
+              <span className="font-mono text-muted text-xs">https://rpc.botchain.ai</span>
             </div>
             {isAddress(inputAddress) && (
               <div className="chain-info-row">
                 <span className="text-dim">Explorer:</span>
                 <a
-                  href={`https://scan.bohr.life/address/${inputAddress}`}
+                  href={`https://scan.botchain.ai/address/${inputAddress}`}
                   target="_blank"
                   rel="noreferrer"
                   className="font-mono text-xs text-gold flex items-center gap-1 hover:underline"
                 >
-                  View on Bohr Scan <ExternalLink size={12} />
+                  View on BotChain Explorer <ExternalLink size={12} />
                 </a>
               </div>
             )}
@@ -204,7 +208,7 @@ export const ContractModal: FC<ContractModalProps> = ({
             <div className="deploy-header">
               <div className="deploy-title">Deploy New Instance</div>
               <div className="deploy-desc">
-                Deploy <code>ScheduledTransfer.sol</code> directly to BotChain Testnet from your connected wallet.
+                Deploy <code>ScheduledTransfer.sol</code> directly to BotChain Mainnet from your connected wallet.
               </div>
             </div>
 
@@ -226,7 +230,7 @@ export const ContractModal: FC<ContractModalProps> = ({
                   <span>{isDeploying ? 'Deploying on-chain...' : 'Deployed!'}</span>
                 </div>
                 <a
-                  href={`https://scan.bohr.life/tx/${deployTxHash}`}
+                  href={`https://scan.botchain.ai/tx/${deployTxHash}`}
                   target="_blank"
                   rel="noreferrer"
                   className="text-xs text-gold hover:underline flex items-center gap-1"

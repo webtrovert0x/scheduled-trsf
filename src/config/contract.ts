@@ -2,7 +2,7 @@ import { parseAbi } from 'viem'
 
 // Default address can be set here or entered/swapped dynamically in the UI
 export const DEFAULT_CONTRACT_ADDRESS = (import.meta.env.VITE_CONTRACT_ADDRESS ||
-  '0x1ef64cc8e0e5c251bf8f77034a091957d1105f2d') as `0x${string}`
+  '0x4e82db1e7fe4a3104677a8ca7f27eb4f982e74ac') as `0x${string}`
 
 export const SCHEDULED_TRANSFER_ABI = [
   {

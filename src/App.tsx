@@ -9,7 +9,7 @@ import {
   DEFAULT_CONTRACT_ADDRESS,
   type ScheduledTransferItem,
 } from './config/contract'
-import { botchainTestnet } from './config/chain'
+import { botchainMainnet } from './config/chain'
 import { Header } from './components/Header'
 import { ScheduleForm } from './components/ScheduleForm'
 import { TransferList } from './components/TransferList'
@@ -54,7 +54,7 @@ export function App() {
     address: contractAddress,
     abi: SCHEDULED_TRANSFER_ABI,
     functionName: 'totalTransfers',
-    chainId: botchainTestnet.id,
+    chainId: botchainMainnet.id,
   })
 
   // Read all transfer IDs
@@ -66,7 +66,7 @@ export function App() {
     address: contractAddress,
     abi: SCHEDULED_TRANSFER_ABI,
     functionName: 'getAllTransferIds',
-    chainId: botchainTestnet.id,
+    chainId: botchainMainnet.id,
   })
 
   // Read transfer items by IDs
@@ -81,7 +81,7 @@ export function App() {
     abi: SCHEDULED_TRANSFER_ABI,
     functionName: 'getTransfersByIds',
     args: idsArray.length > 0 ? [idsArray] : undefined,
-    chainId: botchainTestnet.id,
+    chainId: botchainMainnet.id,
     query: {
       enabled: idsArray.length > 0,
     },
@@ -111,7 +111,7 @@ export function App() {
   ).length
   const executedCount = transfersList.filter((t) => t.status === 1).length
 
-  const isWrongNetwork = isConnected && chainId !== botchainTestnet.id
+  const isWrongNetwork = isConnected && chainId !== botchainMainnet.id
 
   return (
     <div className="app-layout">
@@ -121,13 +121,13 @@ export function App() {
           <AlertTriangle size={18} />
           <span>
             You are connected to an unsupported network. Please switch to{' '}
-            <strong>BotChain Testnet (Chain ID 968)</strong>.
+            <strong>BotChain Mainnet (Chain ID 677)</strong>.
           </span>
           <button
-            onClick={() => switchChain?.({ chainId: botchainTestnet.id })}
+            onClick={() => switchChain?.({ chainId: botchainMainnet.id })}
             className="btn-gold network-switch-btn font-mono"
           >
-            Switch to BotChain
+            Switch to BotChain Mainnet
           </button>
         </div>
       )}
@@ -251,11 +251,11 @@ export function App() {
             >
               Whitepaper
             </button>
-            <a href="https://rpc.bohr.life" target="_blank" rel="noreferrer">
-              RPC Endpoint
+            <a href="https://rpc.botchain.ai" target="_blank" rel="noreferrer">
+              Mainnet RPC (677)
             </a>
-            <a href="https://scan.bohr.life" target="_blank" rel="noreferrer">
-              Bohr Explorer
+            <a href="https://scan.botchain.ai" target="_blank" rel="noreferrer">
+              BotChain Explorer
             </a>
             <button
               onClick={() => setIsSettingsOpen(true)}

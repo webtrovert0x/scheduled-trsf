@@ -1,11 +1,11 @@
 # ⏱️ BOT Scheduled Transfer Protocol
 
-[![Network: BotChain Testnet](https://img.shields.io/badge/Network-BotChain%20Testnet%20(968)-F5B300?style=for-the-badge&logo=ethereum&logoColor=black)](https://scan.bohr.life)
-[![Native Token: BOT](https://img.shields.io/badge/Gas%20Coin-BOT-black?style=for-the-badge&color=F5B300)](https://scan.bohr.life)
+[![Network: BotChain Mainnet](https://img.shields.io/badge/Network-BotChain%20Mainnet%20(677)-F5B300?style=for-the-badge&logo=ethereum&logoColor=black)](https://scan.botchain.ai)
+[![Native Token: BOT](https://img.shields.io/badge/Gas%20Coin-BOT%20(150M%20Supply)-black?style=for-the-badge&color=F5B300)](https://scan.botchain.ai)
 [![Solidity: 0.8.20](https://img.shields.io/badge/Solidity-0.8.20-363636?style=for-the-badge&logo=solidity)](https://soliditylang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 
-An open-source, non-custodial smart contract and decentralized application for **time-locked scheduled payments and automated settlement** on **BotChain**.
+An open-source, non-custodial smart contract and decentralized application for **time-locked scheduled payments and automated settlement** on **BotChain Mainnet**.
 
 Prepare transfers that lock funds in contract escrow and execute themselves automatically upon maturity—supporting both native **BOT** coins and any **ERC-20** token on BotChain.
 
@@ -15,14 +15,14 @@ Prepare transfers that lock funds in contract escrow and execute themselves auto
 
 | Parameter | Network Details |
 | :--- | :--- |
-| **Network Name** | **BotChain Testnet** |
-| **Chain ID** | `968` |
-| **RPC Endpoint** | `https://rpc.bohr.life` |
-| **Native Gas Coin** | `BOT` (18 Decimals) |
-| **Contract Address** | [`0x1ef64cc8e0e5c251bf8f77034a091957d1105f2d`](https://scan.bohr.life/address/0x1ef64cc8e0e5c251bf8f77034a091957d1105f2d) |
-| **Verification** | [✅ **Verified on Bohr Scan**](https://scan.bohr.life/address/0x1ef64cc8e0e5c251bf8f77034a091957d1105f2d#code) |
-| **Deployment TX** | [`0x59ddc3e47136b17871db7949c49f1f619f24ebdae764348b7b50f0068cb1a1ea`](https://scan.bohr.life/tx/0x59ddc3e47136b17871db7949c49f1f619f24ebdae764348b7b50f0068cb1a1ea) |
-| **Explorer** | [https://scan.bohr.life/](https://scan.bohr.life/) |
+| **Network Name** | **BotChain Mainnet** |
+| **Chain ID** | `677` |
+| **RPC Endpoint** | `https://rpc.botchain.ai` |
+| **Native Gas Coin** | `BOT` (18 Decimals • Total Supply: 150 Million) |
+| **Contract Address** | [`0x4e82db1e7fe4a3104677a8ca7f27eb4f982e74ac`](https://scan.botchain.ai/address/0x4e82db1e7fe4a3104677a8ca7f27eb4f982e74ac) |
+| **Verification** | [✅ **Verified on BotChain Explorer**](https://scan.botchain.ai/address/0x4e82db1e7fe4a3104677a8ca7f27eb4f982e74ac#code) |
+| **Deployment TX** | [`0x614d7fb177f14ecf678940a50ad581f576d339d7c0663e7896988618e9bd3854`](https://scan.botchain.ai/tx/0x614d7fb177f14ecf678940a50ad581f576d339d7c0663e7896988618e9bd3854) |
+| **Explorer** | [https://scan.botchain.ai/](https://scan.botchain.ai/) |
 
 ---
 
@@ -123,7 +123,7 @@ npm install
 Create a `.env.local` file in the project root:
 ```env
 NEXT_PRIVATE_KEY=your_private_key_here
-VITE_CONTRACT_ADDRESS=0x1ef64cc8e0e5c251bf8f77034a091957d1105f2d
+VITE_CONTRACT_ADDRESS=0x4e82db1e7fe4a3104677a8ca7f27eb4f982e74ac
 VITE_REOWN_PROJECT_ID=your_reown_project_id
 ```
 
@@ -141,7 +141,7 @@ To enable 24/7 autonomous self-execution of transfers upon maturity:
 ```bash
 npm run keeper
 ```
-The keeper script will connect to BotChain Testnet (`https://rpc.bohr.life`), watch for mature transfers, and broadcast execution transactions automatically.
+The keeper script will connect to BotChain Mainnet (`https://rpc.botchain.ai`), watch for mature transfers, and broadcast execution transactions automatically.
 
 ---
 

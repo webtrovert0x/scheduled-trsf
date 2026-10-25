@@ -1,7 +1,7 @@
 import { type FC } from 'react'
 import { useAccount, useBalance, useDisconnect } from 'wagmi'
 import { useAppKit } from '@reown/appkit/react'
-import { botchainTestnet } from '../config/chain'
+import { botchainMainnet } from '../config/chain'
 import { Shield, Wallet, Settings, LogOut, BookOpen } from 'lucide-react'
 import { formatEther } from 'viem'
 
@@ -24,7 +24,7 @@ export const Header: FC<HeaderProps> = ({
 
   const { data: balanceData } = useBalance({
     address,
-    chainId: botchainTestnet.id,
+    chainId: botchainMainnet.id,
   })
 
   return (
@@ -38,7 +38,7 @@ export const Header: FC<HeaderProps> = ({
               <h1 className="brand-title">BOT Scheduled Transfer</h1>
               <span className="network-pill">
                 <span className="network-dot"></span>
-                BotChain 968
+                BotChain Mainnet
               </span>
             </div>
             <p className="brand-subtitle">

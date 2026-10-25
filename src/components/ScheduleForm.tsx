@@ -15,7 +15,7 @@ import {
   zeroAddress,
 } from 'viem'
 import { SCHEDULED_TRANSFER_ABI, ERC20_ABI } from '../config/contract'
-import { botchainTestnet } from '../config/chain'
+import { botchainMainnet } from '../config/chain'
 import {
   Send,
   Coins,
@@ -89,7 +89,7 @@ export const ScheduleForm: FC<ScheduleFormProps> = ({
   // Read native balance
   const { data: nativeBalanceData, refetch: refetchNativeBalance } = useBalance({
     address,
-    chainId: botchainTestnet.id,
+    chainId: botchainMainnet.id,
   })
 
   // Read ERC-20 Details
@@ -99,7 +99,7 @@ export const ScheduleForm: FC<ScheduleFormProps> = ({
     address: isValidTokenAddress ? (tokenAddress as `0x${string}`) : undefined,
     abi: ERC20_ABI,
     functionName: 'symbol',
-    chainId: botchainTestnet.id,
+    chainId: botchainMainnet.id,
     query: { enabled: isValidTokenAddress },
   })
 
@@ -107,7 +107,7 @@ export const ScheduleForm: FC<ScheduleFormProps> = ({
     address: isValidTokenAddress ? (tokenAddress as `0x${string}`) : undefined,
     abi: ERC20_ABI,
     functionName: 'decimals',
-    chainId: botchainTestnet.id,
+    chainId: botchainMainnet.id,
     query: { enabled: isValidTokenAddress },
   })
 
@@ -116,7 +116,7 @@ export const ScheduleForm: FC<ScheduleFormProps> = ({
     abi: ERC20_ABI,
     functionName: 'balanceOf',
     args: address ? [address] : undefined,
-    chainId: botchainTestnet.id,
+    chainId: botchainMainnet.id,
     query: { enabled: isValidTokenAddress && !!address },
   })
 
@@ -125,7 +125,7 @@ export const ScheduleForm: FC<ScheduleFormProps> = ({
     abi: ERC20_ABI,
     functionName: 'allowance',
     args: address && contractAddress ? [address, contractAddress] : undefined,
-    chainId: botchainTestnet.id,
+    chainId: botchainMainnet.id,
     query: { enabled: isValidTokenAddress && !!address && !!contractAddress },
   })
 
@@ -226,7 +226,7 @@ export const ScheduleForm: FC<ScheduleFormProps> = ({
       abi: ERC20_ABI,
       functionName: 'approve',
       args: [contractAddress, parsedAmount],
-      chainId: botchainTestnet.id,
+      chainId: botchainMainnet.id,
     })
   }
 
@@ -271,7 +271,7 @@ export const ScheduleForm: FC<ScheduleFormProps> = ({
           note || '',
         ],
         value: totalValue,
-        chainId: botchainTestnet.id,
+        chainId: botchainMainnet.id,
       })
     } else {
       if (!isValidTokenAddress) {
@@ -291,7 +291,7 @@ export const ScheduleForm: FC<ScheduleFormProps> = ({
           note || '',
         ],
         value: parsedKeeperReward, // Keeper bounty in native BOT
-        chainId: botchainTestnet.id,
+        chainId: botchainMainnet.id,
       })
     }
   }
@@ -672,7 +672,7 @@ export const ScheduleForm: FC<ScheduleFormProps> = ({
               </span>
             </div>
             <a
-              href={`https://scan.bohr.life/tx/${writeHash}`}
+              href={`https://scan.botchain.ai/tx/${writeHash}`}
               target="_blank"
               rel="noreferrer"
               className="tx-explorer-link font-mono"
