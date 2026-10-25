@@ -21,6 +21,10 @@ import {
   ListFilter,
   AlertTriangle,
   Shield,
+  ExternalLink,
+  Globe,
+  Compass,
+  FileCode,
 } from 'lucide-react'
 
 export function App() {
@@ -233,37 +237,100 @@ export function App() {
         )}
       </main>
 
-      {/* Footer */}
+      {/* Footer / Ecosystem Section */}
       <footer className="footer-container">
         <div className="footer-inner">
-          <div className="footer-col">
+          {/* Col 1: Protocol Info */}
+          <div className="footer-col footer-protocol">
             <div className="footer-brand font-mono font-bold text-white flex items-center gap-2">
-              <Logo size={22} /> BOT Scheduled Transfer
+              <Logo size={24} /> BOT Scheduled Transfer
             </div>
             <p className="footer-desc">
-              Trustless scheduled payments for businesses, payroll operators, and individuals on BotChain.
+              Non-custodial time-locked escrow and autonomous settlement protocol built natively for the BOT Chain ecosystem.
             </p>
+            <div className="footer-contract-pill font-mono text-xs">
+              <span className="text-dim">Verified Contract:</span>
+              <a
+                href={`https://scan.botchain.ai/address/${contractAddress}#code`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-gold hover:underline flex items-center gap-1"
+              >
+                {contractAddress.slice(0, 6)}...{contractAddress.slice(-4)} <ExternalLink size={11} />
+              </a>
+            </div>
           </div>
+
+          {/* Col 2: BOT Chain Ecosystem Section */}
+          <div className="footer-col footer-ecosystem">
+            <div className="ecosystem-badge font-mono">
+              <Logo size={18} />
+              <span className="text-gold font-bold">BOT Chain Ecosystem</span>
+            </div>
+            <div className="ecosystem-links font-mono text-xs">
+              <a
+                href="https://botchain.ai"
+                target="_blank"
+                rel="noreferrer"
+                className="ecosystem-link"
+                id="footer-botchain-website"
+              >
+                <Globe size={13} className="text-gold" />
+                <span>BOT Chain website: https://botchain.ai</span>
+                <ExternalLink size={11} className="text-dim" />
+              </a>
+              <a
+                href="https://scan.botchain.ai"
+                target="_blank"
+                rel="noreferrer"
+                className="ecosystem-link"
+                id="footer-botchain-explorer"
+              >
+                <Compass size={13} className="text-gold" />
+                <span>BOT Chain explorer: https://scan.botchain.ai</span>
+                <ExternalLink size={11} className="text-dim" />
+              </a>
+              <div className="ecosystem-spec-row">
+                <span className="text-dim">Mainnet Chain ID:</span>
+                <span className="text-white font-bold">677</span>
+                <span className="text-dim">• Supply:</span>
+                <span className="text-gold">150M BOT</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Col 3: Protocol Resources */}
           <div className="footer-col footer-links font-mono text-xs">
+            <span className="footer-heading text-dim uppercase">Protocol Resources</span>
             <button
               onClick={() => setIsWhitepaperOpen(true)}
-              className="footer-link-btn text-gold"
+              className="footer-link-btn text-gold flex items-center gap-1"
             >
-              Whitepaper
+              <FileCode size={13} /> Protocol Whitepaper
             </button>
-            <a href="https://rpc.botchain.ai" target="_blank" rel="noreferrer">
-              Mainnet RPC (677)
-            </a>
-            <a href="https://scan.botchain.ai" target="_blank" rel="noreferrer">
-              BotChain Explorer
+            <a
+              href="https://github.com/webtrovert0x/scheduled-trsf"
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-1"
+            >
+              GitHub Repository <ExternalLink size={11} />
             </a>
             <button
               onClick={() => setIsSettingsOpen(true)}
-              className="footer-link-btn"
+              className="footer-link-btn flex items-center gap-1"
             >
-              Contract Config
+              Contract Config & Tools
             </button>
           </div>
+        </div>
+
+        {/* Footer Bottom Bar */}
+        <div className="footer-bottom-bar font-mono text-xs">
+          <span>© 2026 BOT Scheduled Transfer Protocol</span>
+          <span className="footer-network-label">
+            Powered by <strong>BOT Chain</strong> • Native Token: <strong>BOT</strong>
+          </span>
         </div>
       </footer>
 
@@ -428,33 +495,98 @@ export function App() {
         }
         .footer-container {
           border-top: 1px solid var(--border-subtle);
-          background: var(--bg-primary);
-          padding: 28px 24px;
+          background: rgba(14, 16, 20, 0.95);
+          padding: 36px 24px 20px 24px;
           margin-top: auto;
         }
         .footer-inner {
           max-width: 1280px;
           margin: 0 auto;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          flex-wrap: wrap;
-          gap: 20px;
+          display: grid;
+          grid-template-columns: 1.3fr 1.6fr 1.1fr;
+          gap: 32px;
+          align-items: start;
+        }
+        @media (max-width: 900px) {
+          .footer-inner {
+            grid-template-columns: 1fr;
+            gap: 28px;
+          }
         }
         .footer-col {
           display: flex;
           flex-direction: column;
-          gap: 6px;
+          gap: 10px;
         }
         .footer-desc {
-          font-size: 0.8rem;
+          font-size: 0.82rem;
           color: var(--text-dim);
-          max-width: 420px;
+          line-height: 1.5;
+          max-width: 360px;
+        }
+        .footer-contract-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid var(--border-subtle);
+          padding: 5px 10px;
+          border-radius: var(--radius-sm);
+          width: fit-content;
+        }
+        .ecosystem-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          background: rgba(245, 179, 0, 0.08);
+          border: 1px solid rgba(245, 179, 0, 0.3);
+          padding: 6px 12px;
+          border-radius: var(--radius-sm);
+          width: fit-content;
+          font-size: 0.82rem;
+          margin-bottom: 2px;
+        }
+        .ecosystem-links {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+        .ecosystem-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          color: var(--text-muted);
+          text-decoration: none;
+          padding: 4px 8px;
+          background: rgba(255, 255, 255, 0.02);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          border-radius: var(--radius-sm);
+          transition: all 0.2s ease;
+        }
+        .ecosystem-link:hover {
+          color: var(--gold-light);
+          border-color: rgba(245, 179, 0, 0.35);
+          background: rgba(245, 179, 0, 0.05);
+          transform: translateX(2px);
+        }
+        .ecosystem-spec-row {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          padding: 2px 8px;
+          font-size: 0.72rem;
+        }
+        .footer-heading {
+          font-size: 0.75rem;
+          font-weight: 700;
+          letter-spacing: 0.05em;
+          margin-bottom: 2px;
         }
         .footer-links {
           display: flex;
-          align-items: center;
-          gap: 18px;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
         }
         .footer-links a {
           color: var(--text-muted);
@@ -471,8 +603,24 @@ export function App() {
           cursor: pointer;
           font-family: inherit;
           font-size: inherit;
+          padding: 0;
         }
         .footer-link-btn:hover {
+          color: var(--gold-primary);
+        }
+        .footer-bottom-bar {
+          max-width: 1280px;
+          margin: 32px auto 0 auto;
+          padding-top: 18px;
+          border-top: 1px solid rgba(255, 255, 255, 0.05);
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 12px;
+          color: var(--text-dim);
+        }
+        .footer-network-label strong {
           color: var(--gold-primary);
         }
       `}</style>
