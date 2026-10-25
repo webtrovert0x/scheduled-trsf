@@ -1,4 +1,4 @@
-const { createWalletClient, createPublicClient, http } = require('viem');
+const { createWalletClient, createPublicClient, http, formatEther } = require('viem');
 const { privateKeyToAccount } = require('viem/accounts');
 const fs = require('fs');
 const path = require('path');
@@ -53,6 +53,16 @@ if (!privateKey) {
 const formattedKey = privateKey.startsWith('0x') ? privateKey : `0x${privateKey}`;
 const account = privateKeyToAccount(formattedKey);
 
+// Target network selection: Default is Mainnet (677) unless --testnet is provided
+const isTestnet = process.argv.includes('--testnet');
+
+const botchainMainnet = {
+  id: 677,
+  name: 'BotChain Mainnet',
+  nativeCurrency: { name: 'BOT', symbol: 'BOT', decimals: 18 },
+  rpcUrls: { default: { http: ['https://rpc.botchain.ai'] } },
+};
+
 const botchainTestnet = {
   id: 968,
   name: 'BotChain Testnet',
@@ -60,44 +70,89 @@ const botchainTestnet = {
   rpcUrls: { default: { http: ['https://rpc.bohr.life'] } },
 };
 
+const targetNetwork = isTestnet ? botchainTestnet : botchainMainnet;
+const rpcUrl = isTestnet ? 'https://rpc.bohr.life' : 'https://rpc.botchain.ai';
+const explorerUrl = isTestnet ? 'https://scan.bohr.life' : 'https://scan.botchain.ai';
+
 async function main() {
+  console.log('====================================================');
+  console.log(`🚀 Deploying to ${targetNetwork.name} (Chain ID ${targetNetwork.id})`);
+  console.log(`RPC URL:          ${rpcUrl}`);
+  console.log(`Explorer:         ${explorerUrl}`);
   console.log(`Deployer Address: ${account.address}`);
+  console.log('====================================================');
 
   const publicClient = createPublicClient({
-    chain: botchainTestnet,
-    transport: http('https://rpc.bohr.life'),
+    chain: targetNetwork,
+    transport: http(rpcUrl),
   });
 
   const walletClient = createWalletClient({
     account,
-    chain: botchainTestnet,
-    transport: http('https://rpc.bohr.life'),
+    chain: targetNetwork,
+    transport: http(rpcUrl),
   });
 
+  // Query balance
   const balance = await publicClient.getBalance({ address: account.address });
-  console.log(`Deployer Balance: ${(Number(balance) / 1e18).toFixed(4)} BOT`);
+  const balanceFormatted = formatEther(balance);
+  console.log(`Deployer Balance: ${balanceFormatted} BOT`);
 
-  if (balance === 0n) {
-    console.error('Error: Deployer address has 0 BOT balance. Please fund the address with testnet BOT gas token.');
+  // Query gas price directly from node to ensure lowest optimal fee
+  const gasPrice = await publicClient.getGasPrice();
+  const gasPriceGwei = Number(gasPrice) / 1e9;
+  console.log(`Current Gas Price: ${gasPriceGwei} gwei (${gasPrice} wei)`);
+
+  // Estimate gas
+  let estimatedGas;
+  try {
+    estimatedGas = await publicClient.estimateGas({
+      account: account.address,
+      data: artifact.bytecode,
+    });
+  } catch (e) {
+    // Standard conservative estimate for ScheduledTransfer if simulation dry-run errors
+    estimatedGas = 1900000n;
+  }
+
+  const estimatedFeeWei = estimatedGas * gasPrice;
+  const estimatedFeeBOT = formatEther(estimatedFeeWei);
+
+  console.log(`Estimated Gas:    ${estimatedGas.toString()} units`);
+  console.log(`Estimated Fee:    ${estimatedFeeBOT} BOT (Gas optimized: no extra multipliers)`);
+  console.log('----------------------------------------------------');
+
+  if (balance < estimatedFeeWei) {
+    console.error(`\n❌ INSUFFICIENT GAS BALANCE ON ${targetNetwork.name.toUpperCase()}:`);
+    console.error(`Current Balance:   ${balanceFormatted} BOT`);
+    console.error(`Required Minimum:  ~${estimatedFeeBOT} BOT`);
+    console.error(`Please send at least ~0.05 BOT to deployer address:`);
+    console.error(`👉 ${account.address}\n`);
     process.exit(1);
   }
 
-  console.log('Deploying ScheduledTransfer contract to BotChain Testnet (Chain ID 968)...');
+  console.log('Deploying ScheduledTransfer contract with minimal gas...');
+  
+  // Deploy with exact gasPrice to prevent overpaying
   const hash = await walletClient.deployContract({
     abi: artifact.abi,
     bytecode: artifact.bytecode,
+    gasPrice: gasPrice,
   });
 
   console.log(`Deployment TX Hash: ${hash}`);
-  console.log(`Explorer Link: https://scan.bohr.life/tx/${hash}`);
+  console.log(`Explorer Link: ${explorerUrl}/tx/${hash}`);
 
-  console.log('Waiting for transaction confirmation on BotChain...');
+  console.log(`Waiting for confirmation on ${targetNetwork.name}...`);
   const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
   if (receipt.status === 'success' && receipt.contractAddress) {
-    console.log(`Contract deployed successfully!`);
-    console.log(`Contract Address: ${receipt.contractAddress}`);
-    console.log(`Contract Explorer: https://scan.bohr.life/address/${receipt.contractAddress}`);
+    const actualFeeWei = receipt.gasUsed * receipt.effectiveGasPrice;
+    console.log('\n🎉 CONTRACT DEPLOYED SUCCESSFULLY!');
+    console.log(`Contract Address:   ${receipt.contractAddress}`);
+    console.log(`Gas Used:           ${receipt.gasUsed.toString()} units`);
+    console.log(`Actual Fee Paid:    ${formatEther(actualFeeWei)} BOT`);
+    console.log(`Contract Explorer:  ${explorerUrl}/address/${receipt.contractAddress}#code`);
 
     // Update DEFAULT_CONTRACT_ADDRESS in src/config/contract.ts
     const contractConfigFile = path.resolve(__dirname, '../src/config/contract.ts');
@@ -108,10 +163,11 @@ async function main() {
         `export const DEFAULT_CONTRACT_ADDRESS = (import.meta.env.VITE_CONTRACT_ADDRESS ||\n  '${receipt.contractAddress}') as \`0x\${string}\``
       );
       fs.writeFileSync(contractConfigFile, content);
-      console.log(`Updated DEFAULT_CONTRACT_ADDRESS in src/config/contract.ts`);
+      console.log(`Updated DEFAULT_CONTRACT_ADDRESS in src/config/contract.ts to ${receipt.contractAddress}`);
     }
   } else {
     console.error('Deployment transaction failed on-chain.');
+    process.exit(1);
   }
 }
 

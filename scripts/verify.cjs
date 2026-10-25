@@ -5,8 +5,13 @@ async function verify() {
   const contractPath = path.resolve(__dirname, '../contracts/ScheduledTransfer.sol');
   const sourceCode = fs.readFileSync(contractPath, 'utf8');
 
-  // Parse contract address from contract config or CLI args
-  let contractAddress = process.argv[2] || process.env.VITE_CONTRACT_ADDRESS;
+  const isTestnet = process.argv.includes('--testnet');
+  const explorerBase = isTestnet ? 'https://scan.bohr.life' : 'https://scan.botchain.ai';
+  const networkName = isTestnet ? 'BotChain Testnet (968)' : 'BotChain Mainnet (677)';
+
+  // Parse contract address from CLI args or contract config
+  let contractAddress = process.argv.find(arg => arg.startsWith('0x') && arg.length === 42) || process.env.VITE_CONTRACT_ADDRESS;
+
   if (!contractAddress) {
     const configPath = path.resolve(__dirname, '../src/config/contract.ts');
     if (fs.existsSync(configPath)) {
@@ -17,9 +22,6 @@ async function verify() {
       }
     }
   }
-  if (!contractAddress) {
-    contractAddress = '0x1ef64cc8e0e5c251bf8f77034a091957d1105f2d';
-  }
 
   if (!contractAddress) {
     console.error('Error: Contract address not found. Specify via: node scripts/verify.cjs <0xAddress>');
@@ -27,13 +29,13 @@ async function verify() {
   }
 
   console.log('----------------------------------------------------');
-  console.log('🤖 BotChain Contract Verification');
+  console.log(`🤖 Contract Verification on ${networkName}`);
   console.log('----------------------------------------------------');
   console.log(`Contract:         ScheduledTransfer`);
   console.log(`Address:          ${contractAddress}`);
   console.log(`Compiler:         v0.8.20+commit.a1b79de6`);
   console.log(`Optimization:     Enabled (200 runs)`);
-  console.log(`Explorer:         https://scan.bohr.life`);
+  console.log(`Explorer:         ${explorerBase}`);
   console.log('----------------------------------------------------');
 
   const payload = {
@@ -47,7 +49,7 @@ async function verify() {
     license_type: 'mit'
   };
 
-  const verifyUrl = `https://scan.bohr.life/api/v2/smart-contracts/${contractAddress}/verification/via/flattened-code`;
+  const verifyUrl = `${explorerBase}/api/v2/smart-contracts/${contractAddress}/verification/via/flattened-code`;
   console.log(`Submitting verification request to:\n${verifyUrl}\n`);
 
   try {
@@ -63,12 +65,8 @@ async function verify() {
     const bodyText = await res.text();
     console.log(`Submission Response [HTTP ${res.status}]:`, bodyText);
 
-    if (res.status !== 200 && res.status !== 201) {
-      console.error('Submission failed or already processed.');
-    }
-
-    console.log('\nPolling verification status on Bohr Scan...');
-    const statusUrl = `https://scan.bohr.life/api/v2/smart-contracts/${contractAddress}`;
+    console.log(`\nPolling verification status on ${explorerBase}...`);
+    const statusUrl = `${explorerBase}/api/v2/smart-contracts/${contractAddress}`;
 
     for (let i = 1; i <= 10; i++) {
       await new Promise(r => setTimeout(r, 2000));
@@ -81,7 +79,7 @@ async function verify() {
           console.log(`Verified At:      ${data.verified_at}`);
           console.log(`Compiler Version: ${data.compiler_version}`);
           console.log(`\nView on Explorer:`);
-          console.log(`👉 https://scan.bohr.life/address/${contractAddress}#code\n`);
+          console.log(`👉 ${explorerBase}/address/${contractAddress}#code\n`);
           return;
         }
       }
@@ -89,7 +87,7 @@ async function verify() {
     }
 
     console.log('\nContract submitted. Please check the explorer:');
-    console.log(`👉 https://scan.bohr.life/address/${contractAddress}#code\n`);
+    console.log(`👉 ${explorerBase}/address/${contractAddress}#code\n`);
   } catch (error) {
     console.error('Verification error:', error.message);
     process.exit(1);

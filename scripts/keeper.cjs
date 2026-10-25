@@ -31,6 +31,14 @@ function loadEnv() {
 
 loadEnv();
 
+// Catch unexpected exceptions to keep daemon alive 24/7
+process.on('uncaughtException', (err) => {
+  console.error('[Auto-Executor] Uncaught error caught, continuing:', err.message || err);
+});
+process.on('unhandledRejection', (reason) => {
+  console.error('[Auto-Executor] Unhandled rejection caught, continuing:', reason?.message || reason);
+});
+
 const artifactPath = path.resolve(__dirname, '../src/config/compiledContract.json');
 const artifact = JSON.parse(fs.readFileSync(artifactPath, 'utf8'));
 
@@ -58,6 +66,15 @@ if (!privateKey) {
 const formattedKey = privateKey.startsWith('0x') ? privateKey : `0x${privateKey}`;
 const account = privateKeyToAccount(formattedKey);
 
+const isTestnet = process.argv.includes('--testnet');
+
+const botchainMainnet = {
+  id: 677,
+  name: 'BotChain Mainnet',
+  nativeCurrency: { name: 'BOT', symbol: 'BOT', decimals: 18 },
+  rpcUrls: { default: { http: ['https://rpc.botchain.ai'] } },
+};
+
 const botchainTestnet = {
   id: 968,
   name: 'BotChain Testnet',
@@ -65,27 +82,41 @@ const botchainTestnet = {
   rpcUrls: { default: { http: ['https://rpc.bohr.life'] } },
 };
 
+const targetNetwork = isTestnet ? botchainTestnet : botchainMainnet;
+const rpcUrl = isTestnet ? 'https://rpc.bohr.life' : 'https://rpc.botchain.ai';
+const explorerUrl = isTestnet ? 'https://scan.bohr.life' : 'https://scan.botchain.ai';
+
+const transportConfig = http(rpcUrl, {
+  retryCount: 3,
+  retryDelay: 1000,
+  timeout: 12000,
+});
+
 const publicClient = createPublicClient({
-  chain: botchainTestnet,
-  transport: http('https://rpc.bohr.life'),
+  chain: targetNetwork,
+  transport: transportConfig,
 });
 
 const walletClient = createWalletClient({
   account,
-  chain: botchainTestnet,
-  transport: http('https://rpc.bohr.life'),
+  chain: targetNetwork,
+  transport: transportConfig,
 });
 
 console.log('==================================================');
-console.log('🤖 BotChain Autonomous Execution Keeper Started');
+console.log(`🤖 BotChain Autonomous Execution Keeper (${targetNetwork.name})`);
 console.log(`Relayer Address: ${account.address}`);
 console.log(`Target Contract: ${contractAddress}`);
 console.log(`Monitoring for mature transfers every 4 seconds...`);
 console.log('==================================================');
 
 const executingIds = new Set();
+let isRunningCycle = false;
 
 async function checkAndExecuteTransfers() {
+  if (isRunningCycle) return;
+  isRunningCycle = true;
+
   try {
     const totalCount = await publicClient.readContract({
       address: contractAddress,
@@ -93,7 +124,10 @@ async function checkAndExecuteTransfers() {
       functionName: 'totalTransfers',
     });
 
-    if (totalCount === 0n) return;
+    if (totalCount === 0n) {
+      isRunningCycle = false;
+      return;
+    }
 
     const allIds = await publicClient.readContract({
       address: contractAddress,
@@ -101,7 +135,10 @@ async function checkAndExecuteTransfers() {
       functionName: 'getAllTransferIds',
     });
 
-    if (!allIds || allIds.length === 0) return;
+    if (!allIds || allIds.length === 0) {
+      isRunningCycle = false;
+      return;
+    }
 
     const transfers = await publicClient.readContract({
       address: contractAddress,
@@ -120,7 +157,10 @@ async function checkAndExecuteTransfers() {
       }
     }
 
-    if (readyToExecute.length === 0) return;
+    if (readyToExecute.length === 0) {
+      isRunningCycle = false;
+      return;
+    }
 
     console.log(`[Auto-Executor] Found ${readyToExecute.length} mature transfer(s) ready for execution.`);
 
@@ -138,7 +178,7 @@ async function checkAndExecuteTransfers() {
         });
 
         console.log(`[Auto-Executor] TX Broadcasted! Hash: ${hash}`);
-        console.log(`[Auto-Executor] Explorer: https://scan.bohr.life/tx/${hash}`);
+        console.log(`[Auto-Executor] Explorer: ${explorerUrl}/tx/${hash}`);
 
         const receipt = await publicClient.waitForTransactionReceipt({ hash });
         console.log(`[Auto-Executor] Transfer #${idStr} executed successfully! Status: ${receipt.status}`);
@@ -149,7 +189,10 @@ async function checkAndExecuteTransfers() {
       }
     }
   } catch (err) {
-    console.error('[Auto-Executor] Error during monitoring cycle:', err.message || err);
+    const msg = err.shortMessage || err.message || String(err);
+    console.warn(`[Auto-Executor] RPC connection note: ${msg.slice(0, 120)} (will retry in 4s)`);
+  } finally {
+    isRunningCycle = false;
   }
 }
 
