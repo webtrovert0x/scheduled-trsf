@@ -16,6 +16,7 @@ import { TransferList } from './components/TransferList'
 import { ContractModal } from './components/ContractModal'
 import { WhitepaperModal } from './components/WhitepaperModal'
 import { Logo } from './components/Logo'
+import { BotChainLogo } from './components/BotChainLogo'
 import {
   Send,
   ListFilter,
@@ -29,15 +30,43 @@ export function App() {
   const { chainId, isConnected } = useAccount()
   const { switchChain } = useSwitchChain()
 
-  // Contract address stored in localStorage or default to deployed address
+  // Contract address stored in localStorage or default strictly to verified Mainnet address
   const [contractAddress, setContractAddress] = useState<`0x${string}`>(() => {
-    const saved = localStorage.getItem('botchain_scheduled_contract')
-    if (saved && saved.startsWith('0x') && saved.length === 42 && saved !== '0x4296B07971dDFA9e5B63236e7886477bA34B2275') {
+    try {
+      localStorage.removeItem('botchain_scheduled_contract')
+      localStorage.removeItem('botchain_mainnet_contract')
+      localStorage.removeItem('botchain_mainnet_contract_v2')
+    } catch (_) {}
+
+    const saved = localStorage.getItem('botchain_mainnet_contract_v3')
+    if (
+      saved &&
+      saved.startsWith('0x') &&
+      saved.length === 42 &&
+      saved.toLowerCase() !== '0x1ef64cc8e0e5c251bf8f77034a091957d1105f2d' &&
+      saved.toLowerCase() !== '0x4296b07971ddfa9e5b63236e7886477ba34b2275'
+    ) {
       return saved as `0x${string}`
     }
-    localStorage.setItem('botchain_scheduled_contract', DEFAULT_CONTRACT_ADDRESS)
+    localStorage.setItem('botchain_mainnet_contract_v3', DEFAULT_CONTRACT_ADDRESS)
     return DEFAULT_CONTRACT_ADDRESS
   })
+
+  // Purge any legacy address from browser state on load
+  useEffect(() => {
+    try {
+      localStorage.removeItem('botchain_scheduled_contract')
+      localStorage.removeItem('botchain_mainnet_contract')
+      localStorage.removeItem('botchain_mainnet_contract_v2')
+    } catch (_) {}
+    if (
+      contractAddress.toLowerCase() === '0x1ef64cc8e0e5c251bf8f77034a091957d1105f2d' ||
+      contractAddress.toLowerCase() === '0x4296b07971ddfa9e5b63236e7886477ba34b2275'
+    ) {
+      localStorage.setItem('botchain_mainnet_contract_v3', DEFAULT_CONTRACT_ADDRESS)
+      setContractAddress(DEFAULT_CONTRACT_ADDRESS)
+    }
+  }, [contractAddress])
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [isWhitepaperOpen, setIsWhitepaperOpen] = useState(false)
@@ -45,7 +74,7 @@ export function App() {
 
   const handleSaveContractAddress = (newAddr: `0x${string}`) => {
     setContractAddress(newAddr)
-    localStorage.setItem('botchain_scheduled_contract', newAddr)
+    localStorage.setItem('botchain_mainnet_contract_v3', newAddr)
   }
 
   // Read total transfers count from contract
@@ -262,7 +291,6 @@ export function App() {
           {/* Col 2: BOT Chain Ecosystem Section */}
           <div className="footer-col footer-ecosystem">
             <div className="ecosystem-badge font-mono">
-              <Logo size={18} />
               <span className="text-gold font-bold">BOT Chain Ecosystem</span>
             </div>
             <div className="ecosystem-links font-mono text-xs">
@@ -273,7 +301,7 @@ export function App() {
                 className="ecosystem-link"
                 id="footer-botchain-website"
               >
-                <Logo size={16} />
+                <BotChainLogo size={16} />
                 <span>BOT Chain website: https://botchain.ai</span>
                 <ExternalLink size={11} className="text-dim" />
               </a>
@@ -284,7 +312,7 @@ export function App() {
                 className="ecosystem-link"
                 id="footer-botchain-explorer"
               >
-                <Logo size={16} />
+                <BotChainLogo size={16} />
                 <span>BOT Chain explorer: https://scan.botchain.ai</span>
                 <ExternalLink size={11} className="text-dim" />
               </a>

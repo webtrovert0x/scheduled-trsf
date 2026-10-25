@@ -1,6 +1,8 @@
 import { useState, useEffect, type FC } from 'react'
 import { useAccount, useWalletClient, usePublicClient } from 'wagmi'
 import { isAddress } from 'viem'
+import { botchainMainnet } from '../config/chain'
+import { DEFAULT_CONTRACT_ADDRESS } from '../config/contract'
 import compiledArtifact from '../config/compiledContract.json'
 import {
   X,
@@ -11,6 +13,7 @@ import {
   Loader2,
   ExternalLink,
   Copy,
+  RotateCcw,
 } from 'lucide-react'
 
 interface ContractModalProps {
@@ -39,6 +42,13 @@ export const ContractModal: FC<ContractModalProps> = ({
   const [deployTxHash, setDeployTxHash] = useState<string | null>(null)
   const [deployError, setDeployError] = useState<string | null>(null)
   const [copied, setCopied] = useState<boolean>(false)
+
+  // Synchronize inputAddress when currentAddress changes or modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setInputAddress(currentAddress)
+    }
+  }, [currentAddress, isOpen])
 
   // Verify contract on BotChain Mainnet
   useEffect(() => {
@@ -87,9 +97,11 @@ export const ContractModal: FC<ContractModalProps> = ({
       setDeployError(null)
       setDeployTxHash(null)
 
-      const hash = await walletClient.deployContract({
+      const hash = await (walletClient as any).deployContract({
         abi: compiledArtifact.abi as any,
         bytecode: compiledArtifact.bytecode as `0x${string}`,
+        chain: botchainMainnet,
+        account: walletClient.account,
       })
 
       setDeployTxHash(hash)
@@ -112,6 +124,10 @@ export const ContractModal: FC<ContractModalProps> = ({
     navigator.clipboard.writeText(inputAddress)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  const handleResetToDefault = () => {
+    setInputAddress(DEFAULT_CONTRACT_ADDRESS)
   }
 
   return (
@@ -168,6 +184,18 @@ export const ContractModal: FC<ContractModalProps> = ({
                 {copied ? <CheckCircle2 size={16} className="text-gold" /> : <Copy size={16} />}
               </button>
             </div>
+            {inputAddress.toLowerCase() !== DEFAULT_CONTRACT_ADDRESS.toLowerCase() && (
+              <div className="mt-2 flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={handleResetToDefault}
+                  className="text-xs text-gold hover:underline flex items-center gap-1 font-mono cursor-pointer"
+                >
+                  <RotateCcw size={12} />
+                  Reset to Verified Contract ({DEFAULT_CONTRACT_ADDRESS.slice(0, 6)}...{DEFAULT_CONTRACT_ADDRESS.slice(-4)})
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Quick links & info */}
