@@ -22,8 +22,6 @@ import {
   AlertTriangle,
   Shield,
   ExternalLink,
-  Globe,
-  Compass,
   FileCode,
 } from 'lucide-react'
 
@@ -275,7 +273,7 @@ export function App() {
                 className="ecosystem-link"
                 id="footer-botchain-website"
               >
-                <Globe size={13} className="text-gold" />
+                <Logo size={16} />
                 <span>BOT Chain website: https://botchain.ai</span>
                 <ExternalLink size={11} className="text-dim" />
               </a>
@@ -286,7 +284,7 @@ export function App() {
                 className="ecosystem-link"
                 id="footer-botchain-explorer"
               >
-                <Compass size={13} className="text-gold" />
+                <Logo size={16} />
                 <span>BOT Chain explorer: https://scan.botchain.ai</span>
                 <ExternalLink size={11} className="text-dim" />
               </a>
@@ -309,12 +307,12 @@ export function App() {
               <FileCode size={13} /> Protocol Whitepaper
             </button>
             <a
-              href="https://github.com/webtrovert0x/scheduled-trsf"
+              href="https://rpc.botchain.ai"
               target="_blank"
               rel="noreferrer"
               className="flex items-center gap-1"
             >
-              GitHub Repository <ExternalLink size={11} />
+              Mainnet RPC Endpoint <ExternalLink size={11} />
             </a>
             <button
               onClick={() => setIsSettingsOpen(true)}
